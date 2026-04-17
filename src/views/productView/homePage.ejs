@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwapNext</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/CSS/includes/navbar.css">
+    <link rel="stylesheet" href="/CSS/includes/footer.css">
+    <link rel="stylesheet" href="/CSS/productPages/homePage.css">
+
+</head>
+<body>
+
+    <%- include("../includes/navbar.ejs") %>
+
+    
+
+    <div class="homepage-container">
+        <% for(let location in groupedProducts) { %>
+            <section class="location-row">
+                <div class="row-header">
+                    <h2 class="location-title">Places to stay in <%= location %></h2>
+                    <div class="nav-controls d-none d-md-flex">
+                        <button class="scroll-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="scroll-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="horizontal-scroller card-link">
+                    <% for(let product of groupedProducts[location]) { %>
+                        <div class="card-link">
+                        
+                            <div class="listing-card">
+                                <a href="/api/v1/products/<%= product._id %>" class="ancor">
+                                    <div class="image-wrapper">
+                                        <img src="<%= product.images[0].url %>" alt="listing" loading="lazy">
+                                        <% if(product.rating>4.5) { %>
+                                        <div class="badge-guest">Guest favourite</div>
+                                        <% } %>
+
+                                        <button class="watchlist-btn heart-overlay-btn" data-product-id="<%= product._id %>">
+                                            <i class="fa-heart 
+                                                <%= currUser && currUser.watchList.includes(product._id) ? "fa-solid saved" : "fa-regular notSaved" %>">
+                                            </i>
+                                        </button>
+
+
+                                        
+                                        
+                                        
+                                        
+                                    </div>
+                                </a>
+                                <div class="card-body">
+                                    <div class="title-row">
+                                        <a href="/api/v1/products/<%= product._id %>" class="ancor">
+                                            <span class="main-title"><%= product.title %></span>
+                                        </a>
+                                    </div>
+                                    <div class="price-rating-row">
+                                        <span class="price">₹<%= product.price.toLocaleString('en-IN') %> for 1 nights</span>
+                                        <span class="rating"><i class="fa-solid fa-star"></i><%= product.rating %></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </section>
+        <% } %>
+    </div>
+
+    <%- include('../includes/footer.ejs') %>
+<script src="/SCRIPT/productPages/homePage.js"></script>
+<script src="/SCRIPT/includes/navBar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

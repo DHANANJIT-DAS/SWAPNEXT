@@ -1,0 +1,137 @@
+.edit-profile-wrapper {
+  padding: 60px 80px;
+  background-color: #fff;
+}
+
+.edit-profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  gap: 100px;
+}
+
+/* Profile Photo Section */
+.avatar-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-display {
+  width: 260px;
+  height: 260px;
+  background-color: #222;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  position: relative;
+}
+
+.add-photo-btn {
+  position: absolute;
+  bottom: 0;
+  background: white;
+  padding: 8px 18px;
+  border-radius: 20px;
+  color: #222;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Info Section Styling */
+.info-form-section {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.page-description {
+  color: #717171;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 40px;
+}
+
+.page-description a {
+  color: #222;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* The Grid Layout */
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 40px;
+  row-gap: 30px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.input-group i {
+  font-size: 20px;
+  color: #222;
+  width: 25px;
+}
+
+.input-group input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  color: #222;
+}
+
+.input-group input::placeholder {
+  color: #717171;
+}
+
+/* Footer Button */
+.form-footer {
+  grid-column: 1 / span 2;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 50px;
+}
+
+.done-btn {
+  background-color: #222;
+  color: white;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .edit-profile-container {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-footer {
+    grid-column: 1;
+  }
+}

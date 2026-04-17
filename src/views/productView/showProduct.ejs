@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <%= product.title %> - StayScape
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/CSS/productPages/showProduct.css">
+
+</head>
+
+<body>
+
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-dot"></div>
+        <div class="loader-dot"></div>
+        <div class="loader-dot"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav>
+        <a href="/" class="nav-logo">Stay<span>Scape</span></a>
+        <div class="nav-actions">
+            <a href="/listings" class="nav-btn nav-btn-ghost">Explore</a>
+            <a href="/login" class="nav-btn nav-btn-filled">Sign in</a>
+        </div>
+    </nav>
+
+    <!-- GALLERY -->
+    <div class="gallery-wrapper">
+        <div class="gallery-header">
+            <div>
+                <div class="listing-tag">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <%= product.location || product.country%>
+                </div>
+                <h1 class="listing-title">
+                    <%= product.title %>
+                </h1>
+            </div>
+            <div class="gallery-actions">
+                <button class="action-pill" onclick="handleShare()">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i> Share
+                </button>
+                <button class="action-pill" onclick="handleWishlist(this)">
+                    <i class="fa-regular fa-heart" id="heartIcon"></i> Save
+                </button>
+            </div>
+        </div>
+
+        <div class="gallery-grid-wrapper">
+            <div class="gallery-grid">
+                <!-- Main image -->
+                <div class="img-wrapper main-img" onclick="openGallery()">
+                    <img class="gallery-img" src="<%= product.images[0]?.url %>" alt="<%= product.title %>" />
+                </div>
+                <!-- Sub grid - decorative extras -->
+                <div class="sub-grid">
+                    <div class="img-wrapper" onclick="openGallery()">
+                        <img class="gallery-img" src="<%= product.images[1]?.url %>" alt="Interior" />
+                    </div>
+                    <div class="img-wrapper" onclick="openGallery()">
+                        <img class="gallery-img" src="<%= product.images[2]?.url %>" alt="Kitchen" />
+                    </div>
+                    <div class="img-wrapper" onclick="openGallery()">
+                        <img class="gallery-img" src="<%= product.images[3]?.url %>" alt="Bathroom" />
+                    </div>
+                    <div class="img-wrapper" onclick="openGallery()">
+                        <img class="gallery-img" src="<%= product.images[4]?.url %>" alt="View" />
+                    </div>
+                </div>
+            </div>
+            <button class="show-all-btn" onclick="openGallery()">
+                <i class="fa-solid fa-grid-2"></i> Show all photos
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <div class="page-body">
+
+        <!-- LEFT COLUMN -->
+        <div class="left-col">
+
+            <!-- Listing Meta -->
+            <div class="listing-meta">
+                <div class="meta-left">
+                    <h2>Hosted by <%= product.owner?.fullName%>
+                    </h2>
+                    <div class="meta-pills">
+                        <% if(product.guests || product.capacity){ %>
+                            <span class="meta-pill"><i class="fa-solid fa-user-group"></i>
+                                <%= product.guests || product.capacity %> guests
+                            </span>
+                            <% } else { %>
+                                <span class="meta-pill"><i class="fa-solid fa-user-group"></i> 4 guests</span>
+                                <% } %>
+                                    <% if(product.bedrooms){ %>
+                                        <span class="meta-pill"><i class="fa-solid fa-bed"></i>
+                                            <%= product.bedrooms %> bedrooms
+                                        </span>
+                                        <% } else { %>
+                                            <span class="meta-pill"><i class="fa-solid fa-bed"></i> 2 bedrooms</span>
+                                            <% } %>
+                                                <% if(product.bathrooms){ %>
+                                                    <span class="meta-pill"><i class="fa-solid fa-shower"></i>
+                                                        <%= product.bathrooms %> baths
+                                                    </span>
+                                                    <% } else { %>
+                                                        <span class="meta-pill"><i class="fa-solid fa-shower"></i> 1
+                                                            bath</span>
+                                                        <% } %>
+                                                            <% if(product.category){ %>
+                                                                <span class="meta-pill"><i class="fa-solid fa-tag"></i>
+                                                                    <%= product.category %>
+                                                                </span>
+                                                                <% } %>
+                    </div>
+                </div>
+                <% if(product.owner?.avatar){ %>
+                    <img class="host-avatar" src="<%= product.owner.avatar %>" alt="Host" />
+                    <% } else { %>
+                        <div class="host-avatar-placeholder">
+                            <%= (product.owner?.fullName)[0].toUpperCase() %>
+                        </div>
+                        <% } %>
+            </div>
+
+            <!-- Highlights -->
+            <div class="highlights">
+                <div class="highlight-item">
+                    <div class="highlight-icon"><i class="fa-solid fa-medal"></i></div>
+                    <div class="highlight-text">
+                        <strong>
+                            <%= product.owner?.username || "Your Host" %> is a Superhost
+                        </strong>
+                        <span>Superhosts are experienced, highly rated hosts who are committed to providing great
+                            stays.</span>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon"><i class="fa-solid fa-door-open"></i></div>
+                    <div class="highlight-text">
+                        <strong>Self check-in</strong>
+                        <span>Check yourself in with the lockbox — no need to coordinate arrival times.</span>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="highlight-text">
+                        <strong>Free cancellation for 48 hours</strong>
+                        <span>Get a full refund if you change your mind within 2 days of booking.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="section">
+                <h3>About this place</h3>
+                <p class="description-text" id="descText">
+                    <%= product.description
+                        || "Welcome to this amazing property! This beautiful space offers everything you need for a perfect stay. Enjoy the stunning surroundings, modern amenities, and a warm, welcoming atmosphere. Whether you're here for relaxation or adventure, this place has it all. The space is thoughtfully designed to make you feel right at home, with attention to every detail."
+                        %>
+                </p>
+                <button class="read-more" onclick="toggleDescription()" id="readMoreBtn">
+                    Show more <i class="fa-solid fa-chevron-down" id="readMoreIcon"></i>
+                </button>
+            </div>
+
+            <!-- Amenities -->
+            <div class="section">
+                <h3>What this place offers</h3>
+                <div class="amenities-grid">
+                    <div class="amenity"><i class="fa-solid fa-wifi"></i> High-speed WiFi</div>
+                    <div class="amenity"><i class="fa-solid fa-kitchen-set"></i> Full kitchen</div>
+                    <div class="amenity"><i class="fa-solid fa-snowflake"></i> Air conditioning</div>
+                    <div class="amenity"><i class="fa-solid fa-tv"></i> Smart TV</div>
+                    <div class="amenity"><i class="fa-solid fa-car"></i> Free parking</div>
+                    <div class="amenity"><i class="fa-solid fa-paw"></i> Pets allowed</div>
+                    <div class="amenity"><i class="fa-solid fa-fire-burner"></i> BBQ grill</div>
+                    <div class="amenity"><i class="fa-solid fa-shirt"></i> Washer & Dryer</div>
+                </div>
+            </div>
+
+            
+
+            <!-- Reviews -->
+            <div class="section">
+                <h3>Guest Reviews</h3>
+                <div class="rating-banner">
+                    <div class="rating-big">
+                        <%= product.rating || "4.9" %>
+                    </div>
+                    <div>
+                        <div class="rating-stars">★★★★★</div>
+                        <div class="rating-count">
+                            <%= product.reviewCount || "128" %> reviews
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reviews-grid">
+                    <% if(product.reviews && product.reviews.length> 0){ %>
+                        <% product.reviews.slice(0,2).forEach(function(review){ %>
+                            <div class="review-card">
+                                <div class="reviewer">
+                                    <div class="reviewer-avatar">
+                                        <%= review.author ? review.author[0].toUpperCase() : "G" %>
+                                    </div>
+                                    <div>
+                                        <div class="reviewer-name">
+                                            <%= review.author || "Guest" %>
+                                        </div>
+                                        <div class="reviewer-date">
+                                            <%= review.date || "Recent stay" %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="review-text">
+                                    <%= review.comment || review.body || review.text %>
+                                </p>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="review-card">
+                                        <div class="reviewer">
+                                            <div class="reviewer-avatar"
+                                                style="background:linear-gradient(135deg,#f093fb,#f5576c);">S</div>
+                                            <div>
+                                                <div class="reviewer-name">Sarah M.</div>
+                                                <div class="reviewer-date">March 2025</div>
+                                            </div>
+                                        </div>
+                                        <p class="review-text">Absolutely stunning place! The host was incredibly
+                                            responsive and the property was exactly as described. We had an amazing time
+                                            and would definitely come back.</p>
+                                    </div>
+                                    <div class="review-card">
+                                        <div class="reviewer">
+                                            <div class="reviewer-avatar"
+                                                style="background:linear-gradient(135deg,#4facfe,#00f2fe);">J</div>
+                                            <div>
+                                                <div class="reviewer-name">James K.</div>
+                                                <div class="reviewer-date">February 2025</div>
+                                            </div>
+                                        </div>
+                                        <p class="review-text">Great location, clean space, and all the amenities you
+                                            need. The views were breathtaking and we loved every moment of our stay.
+                                            Highly recommend!</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+        </div><!-- /left-col -->
+
+        <!-- RIGHT COLUMN – BOOKING CARD -->
+        <div class="right-col">
+            <div class="booking-card">
+                <div class="price-row">
+                    <span class="price-amount">
+                        ₹<%= product.price ? product.price.toLocaleString('en-IN') : "4,500" %>
+                    </span>
+                    <span class="price-unit">/ night</span>
+                    <span class="badge-discount">Great value</span>
+                </div>
+
+                <div class="date-grid">
+                    <div class="date-cell">
+                        <div class="date-label">Check-in</div>
+                        <div class="date-value" id="checkinVal">Add date</div>
+                    </div>
+                    <div class="date-cell">
+                        <div class="date-label">Checkout</div>
+                        <div class="date-value" id="checkoutVal">Add date</div>
+                    </div>
+                </div>
+
+                <div class="guest-selector">
+                    <div>
+                        <div class="guest-label">Guests</div>
+                        <div class="guest-value" id="guestLabel">1 guest</div>
+                    </div>
+                    <div class="guest-controls">
+                        <button class="guest-btn" onclick="changeGuests(-1)">−</button>
+                        <span class="guest-count" id="guestCount">1</span>
+                        <button class="guest-btn" onclick="changeGuests(1)">+</button>
+                    </div>
+                </div>
+
+                <button class="reserve-btn" onclick="handleReserve()">
+                    Reserve Now
+                </button>
+                <p class="no-charge-note">You won't be charged yet</p>
+
+                <div class="price-breakdown">
+                    <div class="breakdown-row">
+                        <span>₹<%= product.price ? product.price.toLocaleString('en-IN') : "4,500" %> × <span
+                                    id="nightsLabel">5 nights</span></span>
+                        <span id="baseTotal">₹<%= product.price ? (product.price * 5).toLocaleString('en-IN') : "22,500"
+                                %></span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Cleaning fee</span>
+                        <span>₹800</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Service fee</span>
+                        <span>₹<%= product.price ? Math.round(product.price * 5 * 0.12).toLocaleString('en-IN')
+                                : "2,700" %></span>
+                    </div>
+                    <div class="breakdown-row total">
+                        <span>Total before taxes</span>
+                        <span id="grandTotal">₹<%= product.price ? (product.price * 5 + 800 + Math.round(product.price *
+                                5 * 0.12)).toLocaleString('en-IN') : "26,000" %></span>
+                    </div>
+                </div>
+
+                <!-- Host Quick Info -->
+                <div class="host-info">
+                    <% if(product.owner?.profilePic || product.owner?.avatar){ %>
+                        <img class="host-avatar" src="<%= product.owner.profilePic || product.owner.avatar %>"
+                            alt="Host" />
+                        <% } else { %>
+                            <div class="host-avatar-placeholder" style="width:52px;height:52px;font-size:1.1rem;">
+                                <%= (product.owner?.username || product.owner?.name || "H" )[0].toUpperCase() %>
+                            </div>
+                            <% } %>
+                                <div class="host-info-text">
+                                    <strong>
+                                        <%= product.owner?.username || product.owner?.name || "Host" %>
+                                    </strong>
+                                    <span>Superhost · <%= product.owner?.yearsHosting || "3" %> years hosting</span>
+                                </div>
+                                <button class="contact-host-btn">Contact</button>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /page-body -->
+
+    <!-- GALLERY MODAL -->
+    <div class="modal-overlay" id="galleryModal">
+        <div class="modal modal-relative">
+            <button class="modal-close" onclick="closeGallery()">✕</button>
+            <h3>All Photos</h3>
+            <p>Browse all photos for this listing</p>
+            <div class="modal-photos">
+                <img src="<%= product.image?.url || product.image || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80' %>"
+                    alt="Main" />
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&q=80" alt="Room" />
+                <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&q=80" alt="Kitchen" />
+                <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&q=80" alt="Bath" />
+                <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80" alt="View" />
+                <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80" alt="Pool" />
+            </div>
+        </div>
+    </div>
+
+    
+
+
+    <!-- Location -->
+    <div class="location">
+        <h3>Where you'll be</h3>
+        <p>
+            <i class="fa-solid fa-location-dot" style="color:var(--rose);margin-right:6px;"></i>
+            <%= product.location || "" %>
+                <% if(product.location && product.country){ %>, <% } %>
+                        <%= product.country || "" %>
+        </p>
+        <div id="map">
+            
+        </div>
+    </div>
+
+
+    <script src="/SCRIPT/productPages/showProduct.js"></script>
+</body>
+
+</html>

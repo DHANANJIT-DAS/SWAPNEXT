@@ -1,0 +1,128 @@
+.ab-nav-wrapper {
+  height: 5rem;
+  background: white;
+  border-bottom: 1px solid #ebebeb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+}
+
+.ab-nav-container {
+  max-width: 1880px;
+  width: 100%;
+  margin: 0 1rem;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo */
+.ab-logo { color: #ff385c; text-decoration: none; font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
+/* Search Bar */
+/* Container for the form to ensure it doesn't collapse */
+.ab-nav-center{
+    width:35%;
+}
+.ab-search-form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.ab-search-pill {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 580px; /* Industrial standard width */
+  height: 48px;
+  border: 1px solid #ddd;
+  border-radius: 40px;
+  padding: 0 8px 0 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  background: white;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.ab-search-pill:focus-within {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  border-color: #ff385c; /* Highlights the pill when typing */
+}
+
+/* The actual Input Box */
+.ab-search-input {
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+}
+
+.ab-search-input::placeholder {
+  color: #717171;
+  font-weight: 400;
+}
+
+/* The Search Button */
+.ab-search-btn {
+  background: #ff385c;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  min-width: 32px; /* Prevents shrinking */
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: transform 0.1s;
+}
+
+.ab-search-btn:active {
+  transform: scale(0.9); /* Subtle click effect */
+}
+/* Right Section */
+.ab-nav-right { display: flex; align-items: center; gap: 8px; position: relative; }
+.ab-host-link { text-decoration: none; color: #222; font-size: 14px; font-weight: 600; padding: 12px; border-radius: 22px; }
+.ab-host-link:hover { background: #f7f7f7; }
+
+.ab-globe-btn, .ab-menu-pill {
+  width: 42px; height: 42px; border-radius: 50%; background: #f7f7f7;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.ab-user-initials {
+  width: 42px; height: 42px; border-radius: 50%; background: #222;
+  color: white; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center;
+}
+
+/* Dropdown Flyout */
+.ab-dropdown-box {
+  display: none; position: absolute; top: 55px; right: 0;
+  background: white; width: 240px; border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12); padding: 8px 0; border: 1px solid #ddd;
+}
+.ab-menu-item { display: block; padding: 12px 20px; text-decoration: none; color: #222; font-size: 14px; }
+.ab-menu-item:hover { background: #f7f7f7; }
+hr { border: 0; border-top: 1px solid #eee; margin: 8px 0; }
+
+/* Promo Box */
+.ab-menu-promo { display: flex; justify-content: space-between; padding: 12px 20px; cursor: pointer; }
+.ab-menu-promo:hover { background: #f7f7f7; }
+.ab-promo-content p { margin: 0; font-size: 14px; }
+.ab-promo-content span { font-size: 12px; color: #717171; }
+.ab-promo-icon { font-size: 24px; color: #ff385c; }
+
+.is-open { display: block !important; }
+
+/* Responsive */
+@media (max-width: 992px) { .ab-logo span, .ab-host-link { display: none; } }

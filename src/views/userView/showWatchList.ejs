@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/CSS/userPages/showWatchlist.CSS">
+    <link rel="stylesheet" href="/CSS/style.css">
+</head>
+<body>
+
+    <%- include("../includes/navbar.ejs") %>
+
+    <div class="wishlist-container">
+        <h1 class="wishlist-title">My Wishlists</h1>
+
+        <div class="wishlist-grid">
+
+            <% for(let product of watchList) { %>
+                <div class="wishlist-card">
+                    <a href="/api/v1/products/<%= product._id %>">
+                        <div class="card-image-wrapper">
+                            <img src="<%= product.images[0].url %>" alt="<%= product.title %>">
+                        </div>
+                    </a>
+                    <div class="card-info">
+                        <span class="folder-name"><%= product.location %> 2026</span>
+                        <span class="saved-count">1 saved</span>
+                    </div>
+                </div>
+            <% } %>
+
+            <% if(watchList.length === 0) { %>
+                <div class="wishlist-card">
+                    <div class="card-image-placeholder">
+                        <i class="fa-regular fa-heart"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="folder-name">Create new wishlist</span>
+                        <span class="saved-count">0 saved</span>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    
+</body>
+</html>

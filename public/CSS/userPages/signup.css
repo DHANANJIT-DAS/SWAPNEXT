@@ -1,0 +1,45 @@
+body { 
+    background-color: #ffffff; 
+    color: #222; 
+}
+
+.signup-card {
+    border: 1px solid #DDDDDD;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 500px;
+    margin: 40px auto;
+}
+.form-control {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #B0B0B0;
+    margin-bottom: 15px;
+}
+.form-control:focus {
+    border-color: #222;
+    box-shadow: none;
+}
+.btn-signup {
+    background-color: #fe424d;
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
+    transition: background 0.2s;
+}
+.btn-signup:hover {
+    background-color: #d9303a;
+    color: white;
+}
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+
+
+

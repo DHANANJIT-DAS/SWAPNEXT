@@ -1,0 +1,80 @@
+<nav class="ab-nav-wrapper">
+  <div class="ab-nav-container">
+    
+    <div class="ab-nav-left">
+      <a href="/api/v1/products" class="ab-logo">
+        <i class="fa-brands fa-airbnb"></i>
+        <span>SwapNext</span>
+      </a>
+    </div>
+
+    <% if (currPath === "/api/v1/products") { %>
+      <div class="ab-nav-center">
+          <form action="/listings/search" method="GET" class="ab-search-form">
+              <div class="ab-search-pill">
+              <input 
+                  type="text" 
+                  name="q" 
+                  placeholder="Start your search" 
+                  class="ab-search-input"
+                  autocomplete="off"
+              >
+              <button type="submit" class="ab-search-btn">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+              </div>
+          </form>
+      </div>
+    <% } %>
+
+    <div class="ab-nav-right">
+      <% if (!currUser) { %>
+        <a href="/signup" class="ab-host-link">Become a host</a>
+        <div class="ab-globe-btn"><i class="fa-solid fa-globe"></i></div>
+        <div class="ab-menu-pill" id="ab-dropdown-trigger">
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      <% } else { %>
+        <a href="/listings/new" class="ab-host-link">Switch to hosting</a>
+        <div class="ab-user-initials">
+          
+          <%= currUser.fullName.slice(0, 2).toUpperCase() %>
+        </div>
+        <div class="ab-menu-pill" id="ab-dropdown-trigger">
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      <% } %>
+
+      <div class="ab-dropdown-box" id="ab-dropdown-menu">
+        <% if (currUser) { %>
+          <a href="/api/v1/users/watchlist" class="ab-menu-item">Wishlists</a>
+          <a href="/trips" class="ab-menu-item">Trips</a>
+          <a href="/messages" class="ab-menu-item">contect us</a>
+          <a href="/api/v1/users/profile" class="ab-menu-item">Profile</a>
+          <hr>
+          <a href="/settings" class="ab-menu-item">Account settings</a>
+        <% } else { %>
+          <a href="/api/v1/users/login" class="ab-menu-item">Log in</a>
+          <a href="/api/v1/users/signup" class="ab-menu-item">Sign up</a>
+        <% } %>
+        
+        <hr>
+        <div class="ab-menu-promo">
+          <div class="ab-promo-content">
+            <p><b>Become a host</b></p>
+            <span>Earn extra income.</span>
+          </div>
+          <i class="fa-solid fa-house-chimney-user ab-promo-icon"></i>
+        </div>
+
+        <hr>
+        <a href="/help" class="ab-menu-item">Help Centre</a>
+        <% if (currUser) { %>
+          <a href="/api/v1/users/logout" class="ab-menu-item">Log out</a>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+</nav>
+

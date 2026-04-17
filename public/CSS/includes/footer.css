@@ -1,0 +1,19 @@
+footer {
+        background-color: #f7f7f7 !important;
+    }
+    .footer-link {
+        text-decoration: none;
+        color: #222;
+        font-size: 14px;
+        transition: text-decoration 0.2s;
+    }
+    .footer-link:hover {
+        text-decoration: underline;
+    }
+    .fa-brands {
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    .fa-brands:hover {
+        opacity: 1;
+    }
