@@ -1,9 +1,9 @@
 import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
-import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
+// import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 
-const mapToken=process.env.MAP_TOKEN;
-const geocodingClint=mbxGeocoding({accessToken:mapToken});
+// const mapToken=process.env.MAP_TOKEN;
+// const geocodingClint=mbxGeocoding({accessToken:mapToken});
 
 const getAllProduct = async function (req,res){
 
@@ -59,25 +59,25 @@ const toggleWatchList= async function (req,res){
 
 
 
-const createNewProduct = async function (req,res){
+// const createNewProduct = async function (req,res){
 
-    const { error, value } = productSchema.validate(req.body);
-
-
-    const newProduct = await Product.create(value);
-
-    const landmark = newProduct.landmark;
-    const response = await geocodingClint.forwardGeocode({
-        query:landmark,
-        limit:1,
-    }).send();
-
-    newProduct.geometry=response.body.features[0].geometry;
-
-    await newProduct.save();
+//     const { error, value } = productSchema.validate(req.body);
 
 
-}
+//     const newProduct = await Product.create(value);
+
+//     const landmark = newProduct.landmark;
+//     const response = await geocodingClint.forwardGeocode({
+//         query:landmark,
+//         limit:1,
+//     }).send();
+
+//     newProduct.geometry=response.body.features[0].geometry;
+
+//     await newProduct.save();
+
+
+// }
 
 
 export {getAllProduct,showProduct,toggleWatchList};

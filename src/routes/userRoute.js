@@ -25,5 +25,9 @@ router.route("/updateProfile").post(verifyJWT,upload.single("avatar"),updateUser
 router.route("/watchlist").get(verifyJWT,getUserWatchList);
 
 
+// router.route("/sendOTP").post(sendUserOTP);
+// router.route("/verifyOTP").post(verifyUserOTP);
+
+
 
 export default router;

@@ -1,32 +1,564 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Profile | SwapNext</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/CSS/style.css">
-    <link rel="stylesheet" href="/CSS/userPages/updateProfile.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account — Airbnb</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/CSS/userPages/updateProfile.css"/>
 </head>
 <body>
 
-    
-        <form action="/api/v1/users/updateProfile" method="POST" enctype="multipart/form-data">
-            <input type="file" name="avatar">
-            <button type="submit">upload</button>
-        </form>
-
-    </div>
-</div>
-
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <svg viewBox="0 0 32 32" class="airbnb-logo" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 1C7.6 1 1 7.6 1 16s6.6 15 15 15 15-6.6 15-15S24.4 1 16 1zm0 5.3c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 21.4c-3.7 0-7-1.9-9-4.8.1-3 6-4.6 9-4.6s8.9 1.6 9 4.6c-2 2.9-5.3 4.8-9 4.8z"/>
+      </svg>
+      airbnb
+    </a>
+    <div class="nav-right">
+      <span class="nav-greeting">Hi, <%= locals.currUser ? currUser.username : 'Guest' %></span>
+      <% if (locals.currUser && currUser.avatar) { %>
+        <img src="<%= currUser.avatar %>" alt="avatar" class="nav-avatar" id="navAvatar"/>
+      <% } else { %>
+        <div class="nav-avatar-placeholder" id="navAvatarPlaceholder">
+          <%= locals.currUser ? currUser.username.charAt(0).toUpperCase() : 'G' %>
         </div>
+      <% } %>
     </div>
+  </nav>
 
-    <script src="/SCRIPT/formValidation.js"></script>
-    <script src="/SCRIPT/navBar.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    
-    
+  <div class="page-wrapper">
+
+    <aside class="sidebar">
+      <h2 class="sidebar-title">Account</h2>
+      <p class="sidebar-subtitle">
+        <strong><%= locals.currUser ? currUser.username : 'Guest' %></strong>
+        &nbsp;·&nbsp;<%= locals.currUser ? currUser.email : '' %>
+      </p>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item active" data-tab="personal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Personal info
+        </li>
+        <li class="sidebar-item" data-tab="security">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Login &amp; security
+        </li>
+        <li class="sidebar-item" data-tab="payments">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Payments &amp; payouts
+        </li>
+        <li class="sidebar-item" data-tab="notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          Notifications
+        </li>
+        <li class="sidebar-item" data-tab="privacy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Privacy &amp; sharing
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- ═══ PANEL: Personal Info ═══ -->
+      <section class="tab-panel active" id="panel-personal">
+        <div class="content-header">
+          <h1 class="page-title">Personal info</h1>
+          <p class="page-desc">Update your info and find out how it's used.</p>
+        </div>
+
+        <div class="profile-card">
+          <div class="avatar-section">
+            <div class="avatar-container" id="avatarContainer">
+              <% if (locals.currUser && currUser.avatar) { %>
+                <img src="<%= currUser.avatar %>" alt="Profile photo" class="profile-avatar" id="avatarPreview"/>
+              <% } else { %>
+                <div class="avatar-initials" id="avatarInitials">
+                  <%= locals.currUser ? currUser.username.charAt(0).toUpperCase() : 'G' %>
+                </div>
+              <% } %>
+              <label class="avatar-overlay" for="avatarInput">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Update photo</span>
+              </label>
+              <input type="file" id="avatarInput" accept="image/*" class="hidden-input"/>
+            </div>
+            <div class="avatar-info">
+              <p class="avatar-name"><%= locals.currUser ? currUser.username : 'Guest User' %></p>
+              <p class="avatar-since">Member since <%= locals.currUser && currUser.createdAt ? new Date(currUser.createdAt).getFullYear() : new Date().getFullYear() %></p>
+            </div>
+          </div>
+        </div>
+
+        <form action="/user/<%= locals.currUser ? currUser._id : '' %>/update" method="POST" enctype="multipart/form-data" class="profile-form" id="profileForm">
+          <input type="hidden" name="_method" value="PUT"/>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Legal name</h3>
+                <p class="section-value" id="nameDisplay"><%= locals.currUser ? ((currUser.firstName||'') + ' ' + (currUser.lastName||'')).trim() || 'Not set' : 'Not set' %></p></div>
+              <button type="button" class="edit-btn" data-section="name">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="nameFields">
+              <p class="field-note">The name on your travel document — license or passport.</p>
+              <div class="field-row">
+                <div class="field-group">
+                  <label for="firstName">First name on ID</label>
+                  <input type="text" id="firstName" name="firstName" class="form-input" value="<%= locals.currUser && currUser.firstName ? currUser.firstName : '' %>" placeholder="First name"/>
+                </div>
+                <div class="field-group">
+                  <label for="lastName">Last name on ID</label>
+                  <input type="text" id="lastName" name="lastName" class="form-input" value="<%= locals.currUser && currUser.lastName ? currUser.lastName : '' %>" placeholder="Last name"/>
+                </div>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="name">Cancel</button>
+                <button type="button" class="save-btn" data-close="name">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Preferred name</h3>
+                <p class="section-value" id="usernameDisplay"><%= locals.currUser ? currUser.username : 'Not set' %></p></div>
+              <button type="button" class="edit-btn" data-section="username">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="usernameFields">
+              <p class="field-note">This is the name shown on your Airbnb profile page.</p>
+              <div class="field-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-input" value="<%= locals.currUser ? currUser.username : '' %>" placeholder="Username"/>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="username">Cancel</button>
+                <button type="button" class="save-btn" data-close="username">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Email address</h3>
+                <p class="section-value" id="emailDisplay"><%= locals.currUser ? currUser.email : 'Not set' %></p></div>
+              <button type="button" class="edit-btn" data-section="email">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="emailFields">
+              <p class="field-note">Use an address you'll always have access to.</p>
+              <div class="field-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-input" value="<%= locals.currUser ? currUser.email : '' %>" placeholder="Email address"/>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="email">Cancel</button>
+                <button type="button" class="save-btn" data-close="email">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Phone number</h3>
+                <p class="section-value" id="phoneDisplay"><%= locals.currUser && currUser.phone ? currUser.phone : 'Add a number so confirmed guests can get in touch.' %></p></div>
+              <button type="button" class="edit-btn" data-section="phone"><%= locals.currUser && currUser.phone ? 'Edit' : 'Add' %></button>
+            </div>
+            <div class="form-fields collapsed" id="phoneFields">
+              <p class="field-note">Add your number so confirmed guests and Airbnb can reach you.</p>
+              <div class="field-group">
+                <label for="phone">Phone number</label>
+                <input type="tel" id="phone" name="phone" class="form-input" value="<%= locals.currUser && currUser.phone ? currUser.phone : '' %>" placeholder="+91 00000 00000"/>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="phone">Cancel</button>
+                <button type="button" class="save-btn" data-close="phone">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Address</h3>
+                <p class="section-value" id="addressDisplay"><%= locals.currUser && currUser.address ? currUser.address : 'Not provided' %></p></div>
+              <button type="button" class="edit-btn" data-section="address">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="addressFields">
+              <div class="field-group">
+                <label for="address">Street address</label>
+                <input type="text" id="address" name="address" class="form-input" value="<%= locals.currUser && currUser.address ? currUser.address : '' %>" placeholder="123 Main St"/>
+              </div>
+              <div class="field-row">
+                <div class="field-group">
+                  <label for="city">City</label>
+                  <input type="text" id="city" name="city" class="form-input" value="<%= locals.currUser && currUser.city ? currUser.city : '' %>" placeholder="City"/>
+                </div>
+                <div class="field-group">
+                  <label for="zip">PIN code</label>
+                  <input type="text" id="zip" name="zip" class="form-input" value="<%= locals.currUser && currUser.zip ? currUser.zip : '' %>" placeholder="000000"/>
+                </div>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="address">Cancel</button>
+                <button type="button" class="save-btn" data-close="address">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">About you</h3>
+                <p class="section-value" id="aboutDisplay"><%= locals.currUser && currUser.bio ? currUser.bio : 'Tell us a little about yourself.' %></p></div>
+              <button type="button" class="edit-btn" data-section="about">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="aboutFields">
+              <p class="field-note">Tell future hosts a bit about yourself.</p>
+              <div class="field-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" class="form-input form-textarea" rows="4" placeholder="I love to travel..."><%= locals.currUser && currUser.bio ? currUser.bio : '' %></textarea>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="about">Cancel</button>
+                <button type="button" class="save-btn" data-close="about">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="submit-section">
+            <button type="submit" class="submit-btn">Save all changes</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ═══ PANEL: Login & Security ═══ -->
+      <section class="tab-panel" id="panel-security">
+        <div class="content-header">
+          <h1 class="page-title">Login &amp; security</h1>
+          <p class="page-desc">Update your password and secure your account.</p>
+        </div>
+
+        <form action="/user/<%= locals.currUser ? currUser._id : '' %>/security" method="POST" class="profile-form">
+          <input type="hidden" name="_method" value="PUT"/>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Password</h3>
+                <p class="section-value">Last updated recently — keep it strong &amp; unique</p></div>
+              <button type="button" class="edit-btn" data-section="password">Update</button>
+            </div>
+            <div class="form-fields collapsed" id="passwordFields">
+              <p class="field-note">Use at least 8 characters with a mix of letters, numbers and symbols.</p>
+              <div class="field-group">
+                <label for="currentPassword">Current password</label>
+                <input type="password" id="currentPassword" name="currentPassword" class="form-input" placeholder="Current password"/>
+              </div>
+              <div class="field-group">
+                <label for="newPassword">New password</label>
+                <input type="password" id="newPassword" name="newPassword" class="form-input" placeholder="New password"/>
+                <div class="password-strength" id="strengthBar">
+                  <div class="strength-track"><div class="strength-fill" id="strengthFill"></div></div>
+                  <span class="strength-label" id="strengthLabel"></span>
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="confirmPassword">Confirm new password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="Confirm new password"/>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="password">Cancel</button>
+                <button type="submit" class="save-btn">Update password</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Two-factor authentication</h3>
+                <p class="section-value"><%= locals.currUser && currUser.twoFactor ? 'Enabled — your account is protected' : 'Not enabled — we recommend turning this on' %></p></div>
+              <button type="button" class="edit-btn" data-section="twofa"><%= locals.currUser && currUser.twoFactor ? 'Manage' : 'Enable' %></button>
+            </div>
+            <div class="form-fields collapsed" id="twofaFields">
+              <p class="field-note">Add an extra layer of security by requiring a code when you sign in from a new device.</p>
+              <div class="toggle-row">
+                <div><p class="toggle-label">SMS authentication</p><p class="toggle-desc">Receive a code via text message</p></div>
+                <label class="toggle-switch"><input type="checkbox" name="smsAuth" <%= locals.currUser && currUser.smsAuth ? 'checked' : '' %>/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div><p class="toggle-label">Authenticator app</p><p class="toggle-desc">Use an app like Google Authenticator</p></div>
+                <label class="toggle-switch"><input type="checkbox" name="appAuth" <%= locals.currUser && currUser.appAuth ? 'checked' : '' %>/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="twofa">Cancel</button>
+                <button type="submit" class="save-btn">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Active sessions</h3>
+                <p class="section-value">Devices currently signed in to your account</p></div>
+              <button type="button" class="edit-btn" data-section="sessions">View</button>
+            </div>
+            <div class="form-fields collapsed" id="sessionsFields">
+              <div class="session-item">
+                <div class="session-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div class="session-info"><p class="session-device">Chrome on macOS</p><p class="session-meta">Active now · This device</p></div>
+                <span class="session-badge">Current</span>
+              </div>
+              <div class="session-item">
+                <div class="session-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+                </div>
+                <div class="session-info"><p class="session-device">Safari on iPhone</p><p class="session-meta">2 days ago · Mumbai, India</p></div>
+                <button type="button" class="revoke-btn">Sign out</button>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="sessions">Close</button>
+                <button type="button" class="save-btn danger-btn">Sign out all devices</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Deactivate account</h3>
+                <p class="section-value">Temporarily disable your Airbnb account</p></div>
+              <button type="button" class="edit-btn danger-text" data-section="deactivate">Deactivate</button>
+            </div>
+            <div class="form-fields collapsed" id="deactivateFields">
+              <p class="field-note">When you deactivate, your profile and listings won't be visible. You can reactivate at any time.</p>
+              <div class="field-group">
+                <label for="deactivateReason">Reason (optional)</label>
+                <select id="deactivateReason" name="deactivateReason" class="form-input">
+                  <option value="">Select a reason</option>
+                  <option>Taking a break from hosting/traveling</option>
+                  <option>Privacy concerns</option>
+                  <option>Found another platform</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="deactivate">Cancel</button>
+                <button type="button" class="save-btn danger-btn">Deactivate account</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- ═══ PANEL: Payments ═══ -->
+      <section class="tab-panel" id="panel-payments">
+        <div class="content-header">
+          <h1 class="page-title">Payments &amp; payouts</h1>
+          <p class="page-desc">Review payments, payouts, coupons, and gift cards.</p>
+        </div>
+
+        <div class="info-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p>Your payment info is encrypted and secured with bank-level protection.</p>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header">
+            <div><h3 class="section-title">Payment methods</h3><p class="section-value">Add a payment method using our secure server</p></div>
+            <button type="button" class="edit-btn" data-section="payment">Add</button>
+          </div>
+          <div class="form-fields collapsed" id="paymentFields">
+            <div class="payment-options">
+              <button type="button" class="payment-option-btn active-opt">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Card
+              </button>
+              <button type="button" class="payment-option-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                PayPal
+              </button>
+              <button type="button" class="payment-option-btn">UPI</button>
+            </div>
+            <div class="field-group" style="margin-top:16px;">
+              <label for="cardNumber">Card number</label>
+              <input type="text" id="cardNumber" name="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19"/>
+            </div>
+            <div class="field-row">
+              <div class="field-group"><label for="expiry">Expiry</label><input type="text" id="expiry" name="expiry" class="form-input" placeholder="MM / YY" maxlength="7"/></div>
+              <div class="field-group"><label for="cvv">CVV</label><input type="text" id="cvv" name="cvv" class="form-input" placeholder="•••" maxlength="4"/></div>
+            </div>
+            <div class="field-actions">
+              <button type="button" class="cancel-btn" data-close="payment">Cancel</button>
+              <button type="button" class="save-btn">Add payment method</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header">
+            <div><h3 class="section-title">Payout methods</h3><p class="section-value">Add a payout method so we can send you money</p></div>
+            <button type="button" class="edit-btn" data-section="payout">Add</button>
+          </div>
+          <div class="form-fields collapsed" id="payoutFields">
+            <p class="field-note">Before your first payout, you need to add a payout method.</p>
+            <div class="field-group"><label for="bankAccount">Bank account number</label><input type="text" id="bankAccount" name="bankAccount" class="form-input" placeholder="Account number"/></div>
+            <div class="field-group"><label for="ifsc">IFSC code</label><input type="text" id="ifsc" name="ifsc" class="form-input" placeholder="IFSC code"/></div>
+            <div class="field-actions">
+              <button type="button" class="cancel-btn" data-close="payout">Cancel</button>
+              <button type="button" class="save-btn">Add payout method</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header">
+            <div><h3 class="section-title">Currency</h3><p class="section-value"><%= locals.currUser && currUser.currency ? currUser.currency : 'INR — Indian Rupee' %></p></div>
+            <button type="button" class="edit-btn" data-section="currency">Edit</button>
+          </div>
+          <div class="form-fields collapsed" id="currencyFields">
+            <div class="field-group">
+              <label for="currency">Preferred currency</label>
+              <select id="currency" name="currency" class="form-input">
+                <option value="INR">INR — Indian Rupee</option>
+                <option value="USD">USD — US Dollar</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="GBP">GBP — British Pound</option>
+              </select>
+            </div>
+            <div class="field-actions">
+              <button type="button" class="cancel-btn" data-close="currency">Cancel</button>
+              <button type="button" class="save-btn">Save</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ PANEL: Notifications ═══ -->
+      <section class="tab-panel" id="panel-notifications">
+        <div class="content-header">
+          <h1 class="page-title">Notifications</h1>
+          <p class="page-desc">Choose notification preferences and how you want to be contacted.</p>
+        </div>
+        <form action="/user/<%= locals.currUser ? currUser._id : '' %>/notifications" method="POST" class="profile-form">
+          <input type="hidden" name="_method" value="PUT"/>
+          <div class="notif-group-label">Email notifications</div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Booking requests</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_booking_email" checked/><span class="toggle-slider"></span></label></div></div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Booking confirmations</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_confirm_email" checked/><span class="toggle-slider"></span></label></div></div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Account activity</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_account_email" checked/><span class="toggle-slider"></span></label></div></div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Promotions &amp; tips</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_promo_email"/><span class="toggle-slider"></span></label></div></div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">News &amp; updates</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_news_email"/><span class="toggle-slider"></span></label></div></div>
+
+          <div class="notif-group-label" style="margin-top:28px;">Push &amp; SMS notifications</div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Trip reminders</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_trip_push" checked/><span class="toggle-slider"></span></label></div></div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Messages from hosts</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_msg_push" checked/><span class="toggle-slider"></span></label></div></div>
+          <div class="form-section notif-section"><div class="form-section-header no-cursor"><div><h3 class="section-title">Special offers</h3></div><label class="toggle-switch"><input type="checkbox" name="notif_offers_push"/><span class="toggle-slider"></span></label></div></div>
+
+          <div class="submit-section"><button type="submit" class="submit-btn">Save preferences</button></div>
+        </form>
+      </section>
+
+      <!-- ═══ PANEL: Privacy ═══ -->
+      <section class="tab-panel" id="panel-privacy">
+        <div class="content-header">
+          <h1 class="page-title">Privacy &amp; sharing</h1>
+          <p class="page-desc">Control your personal data, connected apps and data sharing.</p>
+        </div>
+        <form action="/user/<%= locals.currUser ? currUser._id : '' %>/privacy" method="POST" class="profile-form">
+          <input type="hidden" name="_method" value="PUT"/>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Profile visibility</h3><p class="section-value">Who can see your full profile details</p></div>
+              <button type="button" class="edit-btn" data-section="visibility">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="visibilityFields">
+              <p class="field-note">Choose who can see your profile photo, reviews, and travel history.</p>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="profileVisibility" value="public"/>
+                  <span class="radio-content"><strong>Public</strong><span>Anyone on Airbnb can see your profile</span></span></label>
+                <label class="radio-option"><input type="radio" name="profileVisibility" value="guests"/>
+                  <span class="radio-content"><strong>Guests only</strong><span>Only confirmed guests can see your full profile</span></span></label>
+                <label class="radio-option"><input type="radio" name="profileVisibility" value="private"/>
+                  <span class="radio-content"><strong>Private</strong><span>Only your name and photo are visible</span></span></label>
+              </div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="visibility">Cancel</button>
+                <button type="button" class="save-btn" data-close="visibility">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Data sharing</h3><p class="section-value">Control how Airbnb uses your data</p></div>
+              <button type="button" class="edit-btn" data-section="datasharing">Edit</button>
+            </div>
+            <div class="form-fields collapsed" id="datasharingFields">
+              <div class="toggle-row"><div><p class="toggle-label">Personalised ads</p><p class="toggle-desc">Allow Airbnb to use your data to show relevant ads</p></div><label class="toggle-switch"><input type="checkbox" name="personalizedAds"/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div><p class="toggle-label">Analytics &amp; research</p><p class="toggle-desc">Share anonymised data to help improve Airbnb</p></div><label class="toggle-switch"><input type="checkbox" name="analytics" checked/><span class="toggle-slider"></span></label></div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="datasharing">Cancel</button>
+                <button type="button" class="save-btn" data-close="datasharing">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Connected apps</h3><p class="section-value">Apps and services connected to your account</p></div>
+              <button type="button" class="edit-btn" data-section="connectedapps">Manage</button>
+            </div>
+            <div class="form-fields collapsed" id="connectedappsFields">
+              <div class="connected-app">
+                <div class="app-icon google">G</div>
+                <div class="app-info"><p class="app-name">Google</p><p class="app-desc">Calendar &amp; sign-in</p></div>
+                <button type="button" class="revoke-btn">Disconnect</button>
+              </div>
+              <div class="connected-app">
+                <div class="app-icon facebook">f</div>
+                <div class="app-info"><p class="app-name">Facebook</p><p class="app-desc">Social sign-in</p></div>
+                <button type="button" class="revoke-btn">Disconnect</button>
+              </div>
+              <div class="field-actions"><button type="button" class="cancel-btn" data-close="connectedapps">Close</button></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Request your data</h3><p class="section-value">Download a copy of your Airbnb data</p></div>
+              <button type="button" class="edit-btn" data-section="requestdata">Request</button>
+            </div>
+            <div class="form-fields collapsed" id="requestdataFields">
+              <p class="field-note">We'll email you a link to download your data within 30 days, including your profile, bookings, reviews and messages.</p>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="requestdata">Cancel</button>
+                <button type="button" class="save-btn">Send request</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-header">
+              <div><h3 class="section-title">Delete account</h3><p class="section-value">Permanently delete your data and close your account</p></div>
+              <button type="button" class="edit-btn danger-text" data-section="deleteaccount">Delete</button>
+            </div>
+            <div class="form-fields collapsed" id="deleteaccountFields">
+              <p class="field-note">This will permanently delete your Airbnb account, profile, listings and all your data. This action cannot be undone.</p>
+              <div class="field-group"><label for="deleteConfirm">Type DELETE to confirm</label><input type="text" id="deleteConfirm" name="deleteConfirm" class="form-input" placeholder="DELETE"/></div>
+              <div class="field-actions">
+                <button type="button" class="cancel-btn" data-close="deleteaccount">Cancel</button>
+                <button type="button" class="save-btn danger-btn" id="deleteAccountBtn" disabled>Delete my account</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="submit-section"><button type="submit" class="submit-btn">Save privacy settings</button></div>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/SCRIPT/userPages/updateProfile.js"></script>
 </body>
 </html>

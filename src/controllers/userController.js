@@ -138,7 +138,7 @@ const getUserProfile = function (req,res){
 }
 
 const getUpdateUserProfile = function (req,res){
-    res.render("/userView/updateProfile.ejs");
+    res.render("./userView/updateProfile.ejs");
 }
 
 const updateUserProfile = async function (req,res){
