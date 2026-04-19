@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Create account — SwapNext</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/userPages/auth.css"/>
+</head>
+<body class="auth-body">
+
+  	<div class="auth-shell">
+
+		<!-- ══ LEFT — form panel ══ -->
+		<main class="auth-form-panel">
+
+			<!-- top logo -->
+			<a href="/" class="auth-logo" aria-label="SwapNext home">
+				<svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+					<rect width="40" height="40" rx="10" fill="#FF385C"/>
+					<path d="M11 16h14M11 16l5-5M11 16l5 5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M29 24H15M29 24l-5-5M29 24l-5 5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>SwapNext</span>
+			</a>
+
+			<div class="auth-card">
+
+				<div class="auth-card-header">
+					<h1 class="auth-heading">Create your account</h1>
+					<p class="auth-sub">Start buying and selling in your city today</p>
+				</div>
+
+				<!-- Flash error -->
+				<% if (locals.flashError) { %>
+					<div class="auth-alert auth-alert--error" role="alert">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="12" y1="8" x2="12" y2="12"/>
+							<line x1="12" y1="16" x2="12.01" y2="16"/>
+						</svg>
+						<%= flashError %>
+					</div>
+				<% } %>
+
+				<form class="auth-form" id="registerForm" action="/register" method="POST" novalidate>
+
+					<% if (locals.csrfToken) { %>
+						<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+					<% } %>
+
+					<!-- Name row (first + last) -->
+					<div class="field-row">
+						<div class="field-group" id="fg-firstName">
+							<label class="field-label" for="firstName">First name</label>
+							<div class="field-input-wrap">
+								<span class="field-icon">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+										<circle cx="12" cy="7" r="4"/>
+									</svg>
+								</span>
+								<input class="field-input" type="text" id="firstName" name="firstName" placeholder="Arjun" value="<%= locals.formData ? formData.firstName : '' %>" autocomplete="given-name" required aria-describedby="firstName-error">
+							</div>
+							<span class="field-error" id="firstName-error" role="alert"></span>
+						</div>
+
+						<div class="field-group" id="fg-lastName">
+
+							<label class="field-label" for="lastName">Last name</label>
+							<div class="field-input-wrap">
+								<span class="field-icon">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+										<circle cx="12" cy="7" r="4"/>
+									</svg>
+								</span>
+
+								<input class="field-input" type="text" id="lastName" name="lastName" placeholder="Kaur" value="<%= locals.formData ? formData.lastName : '' %>" autocomplete="family-name" required aria-describedby="lastName-error">
+							</div>
+							<span class="field-error" id="lastName-error" role="alert"></span>
+						</div>
+					</div>
+
+					<!-- Email -->
+					<div class="field-group" id="fg-email">
+
+						<label class="field-label" for="email">Email address</label>
+						<div class="field-input-wrap">
+							<span class="field-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+									<polyline points="22,6 12,13 2,6"/>
+								</svg>
+							</span>
+							<input class="field-input" type="email" id="email" name="email" placeholder="you@example.com" value="<%= locals.formData ? formData.email : '' %>" autocomplete="email" required aria-describedby="email-error">
+						</div>
+						<span class="field-error" id="email-error" role="alert"></span>
+
+					</div>
+
+					<!-- Phone (optional) -->
+					<div class="field-group" id="fg-phone">
+
+						<label class="field-label" for="phone">
+							Phone number
+							<span class="field-optional">(optional)</span>
+						</label>
+						<div class="field-input-wrap">
+							<span class="field-icon field-icon--prefix">+91</span>
+							<input class="field-input field-input--prefixed" type="tel" id="phone" name="phone" placeholder="98765 43210" value="<%= locals.formData ? formData.phone : '' %>" autocomplete="tel" inputmode="numeric" maxlength="10" aria-describedby="phone-error">
+						</div>
+						<span class="field-error" id="phone-error" role="alert"></span>
+					</div>
+
+					<!-- City -->
+					<div class="field-group" id="fg-city">
+
+						<label class="field-label" for="city">Your city</label>
+
+						<div class="field-input-wrap">
+							<span class="field-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+									<circle cx="12" cy="10" r="3"/>
+								</svg>
+							</span>
+
+							<select class="field-input field-select" id="city" name="city" required aria-describedby="city-error">
+
+								<option value="" disabled <%= !locals.formData || !formData.city ? 'selected' : '' %>>Select your city</option>
+
+								<% ['Mumbai','Delhi','Bangalore','Chennai','Hyderabad','Kolkata', 'Pune','Ahmedabad','Jaipur','Lucknow','Surat','Indore', 'Bhopal','Patna','Guwahati','Goalpara','Chandigarh','Kochi'].forEach(c => { %>
+									<option value="<%= c %>"
+										<%= locals.formData && formData.city === c ? 'selected' : '' %>>
+										<%= c %>
+									</option>
+								<% }); %>
+							</select>
+						</div>
+						<span class="field-error" id="city-error" role="alert"></span>
+					</div>
+
+					<!-- Password -->
+					<div class="field-group" id="fg-password">
+
+						<label class="field-label" for="password">Password</label>
+
+						<div class="field-input-wrap">
+							<span class="field-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+									<path d="M7 11V7a5 5 0 0110 0v4"/>
+								</svg>
+							</span>
+
+							<input class="field-input" type="password" id="password" name="password" placeholder="Create a strong password" autocomplete="new-password" required aria-describedby="password-error password-strength-desc">
+
+							<button type="button" class="field-eye" id="togglePassword" aria-label="Show password" aria-pressed="false">
+								<svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+									<circle cx="12" cy="12" r="3"/>
+								</svg>
+								<svg class="eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+									<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+									<path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
+									<line x1="1" y1="1" x2="23" y2="23"/>
+								</svg>
+							</button>
+						</div>
+
+						<!-- Password strength bar -->
+
+						<div class="strength-bar" aria-hidden="true">
+							<div class="strength-fill" id="strengthFill"></div>
+						</div>
+
+						<span class="strength-label" id="strengthLabel" aria-live="polite"></span>
+
+						<!-- Checklist -->
+
+						<ul class="pw-checks" id="pwChecks" aria-label="Password requirements">
+							<li class="pw-check" id="chk-len"  data-rule="len">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+								At least 8 characters
+							</li>
+							<li class="pw-check" id="chk-upper" data-rule="upper">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+								One uppercase letter
+							</li>
+							<li class="pw-check" id="chk-num"  data-rule="num">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+								One number
+							</li>
+							<li class="pw-check" id="chk-sym"  data-rule="sym">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+								One special character
+							</li>
+						</ul>
+
+						<span class="field-error" id="password-error" role="alert"></span>
+						<span id="password-strength-desc" class="sr-only"></span>
+
+					</div>
+
+					<!-- Confirm password -->
+					<div class="field-group" id="fg-confirm">
+
+						<label class="field-label" for="confirmPassword">Confirm password</label>
+
+						<div class="field-input-wrap">
+
+							<span class="field-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+									<path d="M7 11V7a5 5 0 0110 0v4"/>
+								</svg>
+							</span>
+
+							<input class="field-input" type="password" id="confirmPassword" name="confirmPassword"placeholder="Re-enter your password" autocomplete="new-password" required aria-describedby="confirm-error">
+
+							<button type="button" class="field-eye" id="toggleConfirm" aria-label="Show confirm password" aria-pressed="false">
+								<svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+									<circle cx="12" cy="12" r="3"/>
+								</svg>
+								<svg class="eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+									<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+									<path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
+									<line x1="1" y1="1" x2="23" y2="23"/>
+								</svg>
+							</button>
+
+						</div>
+
+						<span class="field-error" id="confirm-error" role="alert"></span>
+					</div>
+
+					<!-- Terms checkbox -->
+					<div class="field-check" id="fg-terms">
+						<label class="check-label">
+							<input type="checkbox" name="terms" id="terms" class="check-input" required aria-describedby="terms-error">
+							<span class="check-box" aria-hidden="true"></span>
+							I agree to the
+							<a href="/terms" target="_blank">Terms of Use</a>
+							and
+							<a href="/privacy" target="_blank">Privacy Policy</a>
+						</label>
+						<span class="field-error" id="terms-error" role="alert"></span>
+					</div>
+
+					<!-- Submit -->
+					<button type="submit" class="auth-submit" id="registerSubmit">
+						<span class="submit-text">Create account</span>
+						<span class="submit-spinner" hidden aria-hidden="true"></span>
+					</button>
+
+					<!-- Divider -->
+					<div class="auth-divider"><span>or sign up with</span></div>
+
+					<!-- Social -->
+					<div class="auth-socials">
+						<a href="/auth/google" class="social-btn" aria-label="Sign up with Google">
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+								<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+								<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+								<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+							</svg>
+							Google
+						</a>
+
+						<a href="/auth/facebook" class="social-btn" aria-label="Sign up with Facebook">
+							<svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+								<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+							</svg>
+							Facebook
+						</a>
+					</div>
+
+				</form>
+
+				<p class="auth-switch">
+					Already have an account?
+					<a href="/api/v1/users/login">Log in</a>
+				</p>
+
+			</div>
+		</main>
+
+		<!-- RIGHT — brand panel ══ -->
+
+		<aside class="auth-brand-panel" aria-hidden="true">
+			<div class="brand-content">
+
+				<div class="brand-tagline">
+					<h2>Your community<br>marketplace<br><em>awaits.</em></h2>
+					<p>List your first item in under 3 minutes and reach thousands of buyers in your city.</p>
+				</div>
+
+				<!-- Steps preview -->
+				<div class="brand-steps">
+
+					<div class="bstep">
+						<div class="bstep-num">01</div>
+						<div class="bstep-text">
+							<strong>Create your free account</strong>
+							<span>No credit card needed</span>
+						</div>
+					</div>
+
+					<div class="bstep">
+						<div class="bstep-num">02</div>
+						<div class="bstep-text">
+							<strong>List your item in minutes</strong>
+							<span>Photos · Price · Location</span>
+						</div>
+					</div>
+
+					<div class="bstep">
+						<div class="bstep-num">03</div>
+						<div class="bstep-text">
+							<strong>Meet local buyers</strong>
+							<span>Chat · Meet · Get paid</span>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- Trust badges -->
+				<div class="brand-trust">
+					<div class="btrust">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+						</svg>
+						<span>100% free to list</span>
+					</div>
+
+					<div class="btrust">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+						</svg>
+						<span>Verified sellers</span>
+					</div>
+
+					<div class="btrust">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+						</svg>
+						<span>Direct messaging</span>
+					</div>
+				</div>
+
+			</div>
+		</aside>
+
+  	</div> <!-- /auth-shell -->
+
+	<script src="/SCRIPT/userPages/auth.js"></script>
+	<script>initRegister();</script>
+</body>
+</html>
