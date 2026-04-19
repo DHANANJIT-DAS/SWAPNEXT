@@ -1,64 +1,138 @@
+'use strict';
 import dotenv from "dotenv";
 dotenv.config({path:"./.env"});
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
+const SALT_ROUNDS = 12;
+
 const userSchema=new mongoose.Schema({
 
-    fullName:{
-        type:String,
-        required:[true,"Fullname is required"],
-        index:true,
-    },
-    
-    email:{
-        type:String,
-        required:[true,"Email is required"],
-        unique:true,
-    },
+    /* ── Identity ── */
 
-    password:{
-        type:String,
-        required:[true,"Password is required"],
+    firstName : { 
+        type: String, 
+        required: true, 
+        trim: true, 
+        maxlength: 50 
     },
-
-    avatar:{
+    lastName  : { 
+        type: String, 
+        required: true, 
+        trim: true, 
+        maxlength: 50 
+    },
+    email : {
+        type      : String,
+        required  : true,
+        unique    : true,
+        lowercase : true,
+        trim      : true,
+        match     : [/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, 'Invalid email address'],
+        index     : true
+    },
+    phone : {
+        type    : String,
+        trim    : true,
+        default : '',
+        match   : [/^\d{10}$|^$/, 'Phone must be 10 digits']
+    },
+    city  : { 
+        type: String, 
+        trim: true, 
+        default: '' 
+    },
+    passwordHash : {
+        type     : String,
+        required : true,
+        select   : false   // never returned in queries by default
+    },
+    avatar : {
         type:String, // cloudinary url
+        default:""
     },
-
+    isVerified : { 
+        type: Boolean, 
+        default: false, 
+        index: true 
+    },
+    googleId   : { 
+        type: String, 
+        default: '', 
+        index: true, 
+        sparse: true 
+    },
+    facebookId : { 
+        type: String, 
+        default: '', 
+        index: true, 
+        sparse: true 
+    },
     isSeller:{
         type:Boolean,
-        default:false,
+        default:false
     },
-
     refreshToken:{
         type:String,
+        default:null
     },
 
-    watchList:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Product",
+    /* ── Account state ── */
+    isActive  : { 
+        type: Boolean, 
+        default: true  
+    },
+    isBanned  : { 
+        type: Boolean, 
+        default: false 
+    },
+    banReason : { 
+        type: String,  
+        default: ''    
+    },
+
+    /* ── Engagement ── */
+    savedListings : [
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "Listing" 
         }
-    ]
+    ],
+    unreadMessages: { 
+        type: Number, 
+        default: 0, 
+        min: 0 
+    },
 
 
 },{timestamps:true});
 
+/* ── Virtual: full name ── */
+userSchema.virtual('name').get(function () {
+    return `${this.firstName} ${this.lastName}`.trim();
+});
 
 // passwort encryption
 
-userSchema.pre("save",async function(){
-    if(this.isModified("password")){
-        this.password= await bcrypt.hash(this.password,10);
-        return;
+userSchema.pre("save",async function(next){
+    if(this.isModified("passwordHash")){
+        this.passwordHash= await bcrypt.hash(this.passwordHash,SALT_ROUNDS);
+        return next();
     }
 });
 
 
 userSchema.methods.isPasswordCorrect=async function(password){
-    return await bcrypt.compare(password,this.password);
+    return await bcrypt.compare(password,this.passwordHash);
+}
+
+/* ── Instance method: public-safe object (no hash) ── */
+userSchema.methods.toSafeObject = function () {
+    const obj = this.toObject({ virtuals: true });
+    delete obj.passwordHash;
+    delete obj.__v;
+    return obj;
 }
 
 userSchema.methods.generateAccessToken=function(){
