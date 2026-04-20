@@ -198,6 +198,11 @@ listingSchema.index(
 /* ────────────────────────────────────────────────────────────
    VIRTUALS
    ──────────────────────────────────────────────────────────── */
+
+/*URL of cover photo */
+listingSchema.virtual('coverPhotoUrl').get(function () {
+  return this.photos && this.photos.length > 0 ? this.photos[0] : null;
+});
  
 /* Human-readable time ago — used on listing cards */
 listingSchema.virtual('timeAgo').get(function () {
@@ -304,7 +309,7 @@ listingSchema.statics.getHomepageListings = async function ({
  
     
 listingSchema.statics.incrementViews = function (productId) {
-    return this.findByIdAndUpdate(productId, { $inc: { views: 1 } }, { new: false });
+    return this.findByIdAndUpdate(productId, { $inc: { views: 1 } }, { returnDocument: 'before' });
 };
  
 /* ────────────────────────────────────────────────────────────

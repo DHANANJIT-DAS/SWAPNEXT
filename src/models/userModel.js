@@ -106,7 +106,11 @@ const userSchema=new mongoose.Schema({
     },
 
 
-},{timestamps:true});
+},{
+    timestamps:true,
+    toJSON  : { virtuals: true },
+    toObject: { virtuals: true }
+});
 
 /* ── Virtual: full name ── */
 userSchema.virtual('name').get(function () {
