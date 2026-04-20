@@ -231,25 +231,22 @@ listingSchema.virtual('locationDisplay').get(function () {
 ──────────────────────────────────────────────────────────── */
  
 /* Keep photosCount in sync */
-listingSchema.pre('save', function (next) {
+listingSchema.pre('save', function () {
     this.photosCount = this.photos ? this.photos.length : 0;
-    next();
 });
  
 /* Normalise tags: lowercase, trim, deduplicate */
-listingSchema.pre('save', function (next) {
+listingSchema.pre('save', function () {
     if (this.isModified('tags')) {
         this.tags = [...new Set(this.tags.map(t => t.toLowerCase().trim()).filter(Boolean))];
     }
-    next();
 });
  
 /* Set soldAt timestamp automatically */
-listingSchema.pre('save', function (next) {
+listingSchema.pre('save', function () {
     if (this.isModified('status') && this.status === 'sold' && !this.soldAt) {
         this.soldAt = new Date();
     }
-    next();
 });
  
 /* ────────────────────────────────────────────────────────────

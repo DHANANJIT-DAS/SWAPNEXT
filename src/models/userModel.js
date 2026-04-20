@@ -119,10 +119,10 @@ userSchema.virtual('name').get(function () {
 
 // passwort encryption
 
-userSchema.pre("save",async function(next){
+userSchema.pre("save",async function(){
     if(this.isModified("passwordHash")){
         this.passwordHash= await bcrypt.hash(this.passwordHash,SALT_ROUNDS);
-        return next();
+        return;
     }
 });
 
