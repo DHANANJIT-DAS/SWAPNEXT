@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title><%= listing.title %> — SwapNext</title>
+    <meta name="description" content="<%= listing.description.substring(0,160) %>">
+
+    <!-- Open Graph for share previews -->
+    <meta property="og:title"       content="<%= listing.title %> — SwapNext">
+    <meta property="og:description" content="<%= listing.description.substring(0,160) %>">
+    <% if (listing.photos && listing.photos.length > 0) { %>
+        <meta property="og:image"     content="<%= listing.photos[0] %>">
+    <% } %>
+    <meta property="og:type"        content="product">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/includes/navbar.css">
+    <link rel="stylesheet" href="/CSS/listingPages/showOneListing.css"/>
+</head>
+<body>
+
+    <%- include("../../includes/navbar.ejs", { activePage: "", currUser: locals.currUser || null }) %>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrap">
+        <div class="ls-container">
+			<nav class="breadcrumb" aria-label="Breadcrumb">
+				<a href="/api/v1/listings">Home</a>
+				<span aria-hidden="true">›</span>
+				<a href="/?category=<%= listing.category %>"><%= listing.category.charAt(0).toUpperCase() + listing.category.slice(1) %></a>
+				<span aria-hidden="true">›</span>
+				<a href="/?city=<%= listing.location.city %>"><%= listing.location.city %></a>
+				<span aria-hidden="true">›</span>
+				<span class="breadcrumb-current" aria-current="page"><%= listing.title.length > 36 ? listing.title.substring(0,36) + '…' : listing.title %></span>
+			</nav>
+        </div>
+    </div>
+
+  	<main class="ls-container ls-main">
+
+		<!-- ═══════════════════════════════════════════════
+			TOP ROW: Gallery + Sticky sidebar
+		═══════════════════════════════════════════════ -->
+		<div class="ls-grid">
+
+			<!-- ── LEFT COLUMN ── -->
+			<div class="ls-left">
+
+				<!-- ── PHOTO GALLERY ── -->
+				<section class="gallery" aria-label="Listing photos">
+
+					<!-- Sold / Reserved overlay badge -->
+					<% if (listing.status === 'sold') { %>
+						<div class="gallery-status-badge gallery-status-badge--sold" aria-label="This item has been sold">SOLD</div>
+					<% } else if (listing.status === 'reserved') { %>
+						<div class="gallery-status-badge gallery-status-badge--reserved" aria-label="This item is reserved">RESERVED</div>
+					<% } %>
+
+					<!-- Main photo viewer -->
+					<div class="gallery-main" id="galleryMain">
+						<% if (listing.photos && listing.photos.length > 0) { %>
+							<img class="gallery-main-img" id="mainPhoto" src="<%= listing.photos[0] %>" alt="<%= listing.title %> — photo 1" loading="eager">
+						<% } else { %>
+							<div class="gallery-placeholder" aria-label="No photo available">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
+									<rect x="3" y="3" width="18" height="18" rx="2"/>
+									<circle cx="8.5" cy="8.5" r="1.5"/>
+									<polyline points="21 15 16 10 5 21"/>
+								</svg>
+								<span>No photos available</span>
+							</div>
+						<% } %>
+
+						<!-- Prev / Next arrows -->
+						<% if (listing.photos && listing.photos.length > 1) { %>
+							<button class="gallery-arrow gallery-arrow--prev" id="galPrev" aria-label="Previous photo">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+									<polyline points="15 18 9 12 15 6"/>
+								</svg>
+							</button>
+							<button class="gallery-arrow gallery-arrow--next" id="galNext" aria-label="Next photo">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+								<polyline points="9 18 15 12 9 6"/>
+								</svg>
+							</button>
+							<div class="gallery-counter" aria-live="polite" aria-atomic="true">
+								<span id="galCurrent">1</span> / <%= listing.photos.length %>
+							</div>
+						<% } %>
+
+						<!-- Fullscreen trigger -->
+						<button class="gallery-fullscreen" id="galFullscreen" aria-label="View fullscreen">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+								<polyline points="15 3 21 3 21 9"/>
+								<polyline points="9 21 3 21 3 15"/>
+								<line x1="21" y1="3" x2="14" y2="10"/>
+								<line x1="3" y1="21" x2="10" y2="14"/>
+							</svg>
+						</button>
+					</div>
+
+					<!-- Thumbnail strip -->
+					<% if (listing.photos && listing.photos.length > 1) { %>
+						<div class="gallery-thumbs" role="list" aria-label="Photo thumbnails" id="thumbStrip">
+							<% listing.photos.forEach((photo, i) => { %>
+								<button class="gallery-thumb <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>" data-src="<%= photo %>" role="listitem" aria-label="Photo <%= i + 1 %>" aria-pressed="<%= i === 0 ? 'true' : 'false' %>">
+									<img src="<%= photo %>" alt="Thumbnail <%= i + 1 %>" loading="lazy">
+								</button>
+							<% }); %>
+						</div>
+					<% } %>
+				</section>
+
+				<!-- ── DESCRIPTION ── -->
+				<section class="ls-section" aria-labelledby="descHeading">
+					<h2 class="ls-section-title" id="descHeading">Description</h2>
+					<div class="ls-description" id="descText">
+						<%- listing.description.replace(/\n/g, '<br>') %>
+					</div>
+					<% if (listing.description.length > 300) { %>
+						<button class="desc-toggle" id="descToggle" aria-expanded="false">
+							Show more
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+								<polyline points="6 9 12 15 18 9"/>
+							</svg>
+						</button>
+					<% } %>
+				</section>
+
+				<!-- ── SPECIFICATIONS ── -->
+				<section class="ls-section" aria-labelledby="specsHeading">
+					<h2 class="ls-section-title" id="specsHeading">Specifications</h2>
+
+					<div class="specs-grid">
+
+						<div class="spec-row">
+							<span class="spec-label">Category</span>
+							<span class="spec-value">
+								<a href="/?category=<%= listing.category %>" class="spec-link">
+									<%= listing.category.charAt(0).toUpperCase() + listing.category.slice(1) %>
+								</a>
+							</span>
+						</div>
+
+						<div class="spec-row">
+							<span class="spec-label">Condition</span>
+							<span class="spec-value">
+								<span class="condition-badge condition-badge--<%= listing.condition.toLowerCase().replace(' ','-') %>">
+									<%= listing.condition %>
+								</span>
+							</span>
+						</div>
+
+						<% if (listing.brand) { %>
+							<div class="spec-row">
+								<span class="spec-label">Brand / Maker</span>
+								<span class="spec-value"><%= listing.brand %></span>
+							</div>
+						<% } %>
+
+						<% if (listing.yearAge) { %>
+							<div class="spec-row">
+								<span class="spec-label">Year / Age</span>
+								<span class="spec-value"><%= listing.yearAge %></span>
+							</div>
+						<% } %>
+
+						<div class="spec-row">
+							<span class="spec-label">Listed</span>
+							<span class="spec-value">
+								<%= listing.timeAgo %>
+								<span class="spec-meta">(<%= new Date(listing.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %>)</span>
+							</span>
+						</div>
+
+						<div class="spec-row">
+							<span class="spec-label">Last updated</span>
+							<span class="spec-value">
+								<%= new Date(listing.updatedAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %>
+							</span>
+						</div>
+
+						<div class="spec-row">
+							<span class="spec-label">Listing ID</span>
+							<span class="spec-value spec-mono"><%= listing._id %></span>
+						</div>
+
+						<div class="spec-row">
+							<span class="spec-label">Status</span>
+							<span class="spec-value">
+								<span class="status-dot status-dot--<%= listing.status %>"></span>
+								<%= listing.status.charAt(0).toUpperCase() + listing.status.slice(1) %>
+								<% if (listing.status === 'sold' && listing.soldAt) { %>
+									<span class="spec-meta">on <%= new Date(listing.soldAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %></span>
+								<% } %>
+							</span>
+						</div>
+
+					</div>
+				</section>
+
+				<!-- ── TAGS ── -->
+				<% if (listing.tags && listing.tags.length > 0) { %>
+					<section class="ls-section" aria-labelledby="tagsHeading">
+						<h2 class="ls-section-title" id="tagsHeading">Tags</h2>
+						<div class="tags-row">
+							<% listing.tags.forEach(tag => { %>
+								<a href="/?q=<%= encodeURIComponent(tag) %>" class="tag-chip">#<%= tag %></a>
+							<% }); %>
+						</div>
+					</section>
+				<% } %>
+
+				<!-- ── PRICE COMPARISON CHART ── -->
+				<section class="ls-section" aria-labelledby="priceChartHeading">
+					<h2 class="ls-section-title" id="priceChartHeading">Price comparison</h2>
+					<p class="ls-section-sub">How this listing's price compares to similar items in <%= listing.location.city %></p>
+
+					<div class="chart-card">
+
+						<div class="chart-header">
+							<div class="chart-price-display">
+								<span class="chart-price-label">This listing</span>
+								<span class="chart-price-value">₹<%= Number(listing.price).toLocaleString('en-IN') %></span>
+							</div>
+							<div class="chart-badges">
+								<span class="chart-badge" id="pricePositionBadge">Calculating…</span>
+							</div>
+						</div>
+
+						<div class="chart-wrap">
+							<canvas id="priceChart" role="img" aria-label="Price comparison chart for similar listings"></canvas>
+						</div>
+
+						<div class="chart-legend">
+							<div class="chart-legend-item">
+								<span class="chart-legend-dot" style="background:#FF385C;"></span>
+								<span>This listing (₹<%= Number(listing.price).toLocaleString('en-IN') %>)</span>
+							</div>
+							<div class="chart-legend-item">
+								<span class="chart-legend-dot" style="background:#e8e4da;"></span>
+								<span>Similar listings</span>
+							</div>
+						</div>
+
+						<div class="chart-stats-row" id="chartStatsRow">
+							<!-- Populated by JS after similar prices are fetched -->
+						</div>
+					</div>
+				</section>
+
+				<!-- ── ENGAGEMENT STATS ── -->
+				<section class="ls-section" aria-labelledby="statsHeading">
+					<h2 class="ls-section-title" id="statsHeading">Listing activity</h2>
+					<div class="engagement-grid">
+						<div class="eng-card">
+							<div class="eng-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+									<circle cx="12" cy="12" r="3"/>
+								</svg>
+							</div>
+							<div class="eng-value"><%= (listing.views || 0).toLocaleString('en-IN') %></div>
+							<div class="eng-label">Total views</div>
+						</div>
+
+						<div class="eng-card">
+							<div class="eng-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+								</svg>
+							</div>
+							<div class="eng-value"><%= (listing.savedCount || 0).toLocaleString('en-IN') %></div>
+							<div class="eng-label">Times saved</div>
+						</div>
+
+						<div class="eng-card">
+							<div class="eng-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+								</svg>
+							</div>
+							<div class="eng-value"><%= (listing.inquiries || 0).toLocaleString('en-IN') %></div>
+							<div class="eng-label">Enquiries</div>
+						</div>
+
+						<div class="eng-card">
+							<div class="eng-icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<rect x="3" y="3" width="18" height="18" rx="2"/>
+									<circle cx="8.5" cy="8.5" r="1.5"/>
+									<polyline points="21 15 16 10 5 21"/>
+								</svg>
+							</div>
+							<div class="eng-value"><%= listing.photosCount || (listing.photos ? listing.photos.length : 0) %></div>
+							<div class="eng-label">Photos</div>
+						</div>
+
+					</div>
+				</section>
+
+				<!-- ── LOCATION MAP ── -->
+				<section class="ls-section" aria-labelledby="locationHeading">
+				<h2 class="ls-section-title" id="locationHeading">Location</h2>
+				<p class="ls-section-sub"><%= listing.locationDisplay %> · <%= listing.location.pincode %></p>
+
+				<!-- SVG map with pin at seller's exact pinX/pinY coordinates -->
+				<div class="map-container" role="img" aria-label="Map showing approximate listing location in <%= listing.location.city %>">
+					<svg class="map-bg" viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<rect width="760" height="300" fill="#ebebeb"/>
+					<rect x="0" y="120" width="760" height="24" fill="#fff" opacity="0.9"/>
+					<rect x="0" y="168" width="760" height="16" fill="#fff" opacity="0.7"/>
+					<rect x="0" y="208" width="760" height="11" fill="#fff" opacity="0.6"/>
+					<rect x="206" y="0" width="24" height="300" fill="#fff" opacity="0.9"/>
+					<rect x="472" y="0" width="16" height="300" fill="#fff" opacity="0.7"/>
+					<rect x="640" y="0" width="11" height="300" fill="#fff" opacity="0.6"/>
+					<rect x="6"   y="6"   width="190" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="6"   y="188" width="190" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="240" y="6"   width="222" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="240" y="188" width="222" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="498" y="6"   width="132" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="650" y="6"   width="104" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="498" y="188" width="256" height="106" rx="4" fill="#d8d8d8"/>
+					<rect x="42"  y="38"  width="80"  height="48"  rx="7" fill="#c8e6c9" opacity="0.9"/>
+					<text x="82" y="67" text-anchor="middle" fill="#4a7a4a" font-size="10" font-family="sans-serif" font-weight="600">Park</text>
+					</svg>
+
+					<!-- Pin positioned using the seller's pinX/pinY from the schema -->
+					<div class="map-pin"
+						style="left:<%= listing.location.pinX || 50 %>%; top:<%= listing.location.pinY || 50 %>%;"
+						aria-hidden="true">
+					<div class="pin-bubble">
+						<svg viewBox="0 0 24 24" fill="white" aria-hidden="true">
+						<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+						</svg>
+					</div>
+					</div>
+				</div>
+
+				<!-- Location detail chips -->
+				<div class="location-chips">
+					<div class="loc-chip">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+					</svg>
+					<%= listing.location.city %>, <%= listing.location.state %>
+					</div>
+					<div class="loc-chip">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+						<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+					</svg>
+					Pincode <%= listing.location.pincode %>
+					</div>
+					<div class="loc-chip">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+						<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+						<path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+					</svg>
+					<%= listing.location.meetPref %>
+					</div>
+				</div>
+				</section>
+
+				<!-- ── RELATED LISTINGS ── -->
+				<% if (locals.related && related.length > 0) { %>
+					<section class="ls-section" aria-labelledby="relatedHeading">
+						<h2 class="ls-section-title" id="relatedHeading">Similar listings in <%= listing.location.city %></h2>
+						<div class="related-grid">
+							<% related.forEach(r => { %>
+								<a href="/api/v1/listings/<%= r.id %>" class="related-card">
+									<div class="related-photo">
+										<% if (r.coverPhotoUrl) { %>
+											<img src="<%= r.coverPhotoUrl %>" alt="<%= r.title %>" loading="lazy">
+										<% } else { %>
+											<div class="related-photo-placeholder" aria-hidden="true">
+												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+													<rect x="3" y="3" width="18" height="18" rx="2"/>
+													<circle cx="8.5" cy="8.5" r="1.5"/>
+													<polyline points="21 15 16 10 5 21"/>
+												</svg>
+											</div>
+										<% } %>
+										<span class="related-condition related-condition--<%= r.condition.toLowerCase().replace(' ','-') %>"><%= r.condition %></span>
+									</div>
+									<div class="related-body">
+										<div class="related-title"><%= r.title.length > 40 ? r.title.substring(0,40) + '…' : r.title %></div>
+										<div class="related-price">₹<%= Number(r.price).toLocaleString('en-IN') %></div>
+										<div class="related-meta"><%= r.timeAgo %></div>
+									</div>
+								</a>
+							<% }); %>
+						</div>
+						<div class="related-see-all">
+							<a href="/api/v1/listings?category=<%= listing.category %>&city=<%= listing.location.city %>" class="see-all-btn">
+								See all <%= listing.category %> in <%= listing.location.city %>
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<line x1="5" y1="12" x2="19" y2="12"/>
+									<polyline points="12 5 19 12 12 19"/>
+								</svg>
+							</a>
+						</div>
+
+					</section>
+				<% } %>
+
+			</div><!-- /ls-left -->
+
+			<!-- ── RIGHT COLUMN — sticky sidebar ── -->
+			<aside class="ls-right" aria-label="Listing actions">
+
+				<!-- Price card -->
+				<div class="price-card" id="priceCard">
+
+					<!-- Status banner -->
+					<% if (listing.status === 'sold') { %>
+						<div class="status-banner status-banner--sold" role="status">This item has been sold</div>
+					<% } else if (listing.status === 'reserved') { %>
+						<div class="status-banner status-banner--reserved" role="status">This item is reserved</div>
+					<% } %>
+
+					<div class="price-card-top">
+						<div class="price-main">
+							<span class="price-currency">₹</span>
+							<span class="price-amount"><%= Number(listing.price).toLocaleString('en-IN') %></span>
+						</div>
+						<button class="save-btn" id="saveBtn" data-id="<%= listing._id %>" aria-label="Save this listing" aria-pressed="<%= locals.isSaved ? 'true' : 'false' %>">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+							</svg>
+						</button>
+					</div>
+
+					<!-- Meta pills below price -->
+					<div class="price-meta">
+						<span class="price-meta-chip">
+							<span class="condition-dot condition-dot--<%= listing.condition.toLowerCase().replace(' ','-') %>"></span>
+							<%= listing.condition %>
+						</span>
+
+						<span class="price-meta-chip">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+								<circle cx="12" cy="10" r="3"/>
+							</svg>
+							<%= listing.location.city %>
+						</span>
+
+						<span class="price-meta-chip">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+								<circle cx="12" cy="12" r="10"/>
+								<polyline points="12 6 12 12 16 14"/>
+							</svg>
+							<%= listing.timeAgo %>
+						</span>
+					</div>
+
+					<!-- CTA buttons -->
+					<% if (listing.status === 'active') { %>
+						<% if (locals.currUser && locals.currUser._id && listing.seller && listing.seller._id && locals.currUser._id.toString() === listing.seller._id.toString()) { %>
+							<!-- Owner view -->
+							<a href="/listings/<%= listing._id %>/edit" class="cta-btn cta-btn--secondary">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+									<path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+								</svg>
+								Edit listing
+							</a>
+							<form action="/api/listings/<%= listing._id %>/sold" method="POST" style="margin:0;">
+								<button type="submit" class="cta-btn cta-btn--ghost">Mark as sold</button>
+							</form>
+						<% } else { %>
+							<!-- Buyer view -->
+							<a href="/messages/new?listing=<%= listing._id %>" class="cta-btn cta-btn--primary">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+								</svg>
+								Message seller
+							</a>
+
+							<a href="tel:" class="cta-btn cta-btn--secondary">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.92a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+								</svg>
+								Call seller
+							</a>
+
+							<button class="cta-btn cta-btn--ghost" id="shareBtn">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+									<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+									<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+								</svg>
+								Share listing
+							</button>
+
+						<% } %>
+						<% } else { %>
+							<div class="cta-unavailable">
+								This listing is no longer available
+							</div>
+						<% } %>
+
+					<!-- Report link -->
+					<div class="report-wrap">
+						<a href="/report?listing=<%= listing._id %>" class="report-link">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+								<path d="M3 3l18 18M10.5 10.677a2 2 0 002.823 2.823"/>
+								<path d="M7.362 7.561C5.68 8.74 4.279 10.42 3 12c1.889 2.991 5.282 6 9 6 1.55 0 3.043-.523 4.395-1.35M12 6c3.976 0 7.12 2.884 9 6a19.16 19.16 0 01-1.32 1.916"/>
+							</svg>
+							Report this listing
+						</a>
+					</div>
+
+				</div><!-- /price-card -->
+
+				<!-- ── SELLER CARD ── -->
+				<% if (listing.seller) { %>
+					<div class="seller-card" aria-labelledby="sellerHeading">
+						<div class="seller-header">
+							<% if (listing.seller.avatar) { %>
+								<img class="seller-avatar" src="<%= listing.seller.avatar %>" alt="<%= listing.seller.name %>'s profile picture">
+							<% } else { %>
+								<div class="seller-avatar seller-avatar--initials" aria-hidden="true">
+									<%= listing.seller.name ? listing.seller.name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase() : '?' %>
+								</div>
+							<% } %>
+							<div class="seller-info">
+								<h3 class="seller-name" id="sellerHeading"><%= listing.seller.name %></h3>
+								<% if (listing.seller.city) { %>
+									<p class="seller-city">
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+											<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+											<circle cx="12" cy="10" r="3"/>
+										</svg>
+										<%= listing.seller.city %>
+									</p>
+								<% } %>
+							</div>
+						</div>
+
+						<!-- Seller stats (if available) -->
+						<% if (locals.sellerStats) { %>
+							<div class="seller-stats">
+								<div class="seller-stat">
+									<span class="seller-stat-val"><%= sellerStats.activeListings %></span>
+									<span class="seller-stat-key">Active listings</span>
+								</div>
+								<div class="seller-stat">
+									<span class="seller-stat-val"><%= sellerStats.totalSold %></span>
+									<span class="seller-stat-key">Items sold</span>
+								</div>
+								<div class="seller-stat">
+									<span class="seller-stat-val"><%= sellerStats.memberSince %></span>
+									<span class="seller-stat-key">Member since</span>
+								</div>
+							</div>
+						<% } %>
+
+						<a href="/sellers/<%= listing.seller._id %>" class="seller-profile-btn">
+							View all listings
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+								<line x1="5" y1="12" x2="19" y2="12"/>
+								<polyline points="12 5 19 12 12 19"/>
+							</svg>
+						</a>
+					</div>
+				<% } %>
+
+				<!-- ── SAFETY TIPS ── -->
+				<div class="safety-card" aria-labelledby="safetyHeading">
+					<h3 class="safety-title" id="safetyHeading">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+						</svg>
+						Safety tips
+					</h3>
+					<ul class="safety-list">
+						<li>Meet in a safe, public place</li>
+						<li>Check the item before paying</li>
+						<li>Never pay in advance</li>
+						<li>Report suspicious listings</li>
+					</ul>
+					<a href="/safety" class="safety-link">Learn more about safe trading →</a>
+				</div>
+
+			</aside><!-- /ls-right -->
+
+		</div><!-- /ls-grid -->
+  	</main>
+
+	<!-- ══ FULLSCREEN LIGHTBOX ══ -->
+	<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo fullscreen view" hidden>
+		<button class="lightbox-close" id="lightboxClose" aria-label="Close fullscreen">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+				<line x1="18" y1="6" x2="6" y2="18"/>
+				<line x1="6" y1="6" x2="18" y2="18"/>
+			</svg>
+		</button>
+		<button class="lightbox-arrow lightbox-arrow--prev" id="lbPrev" aria-label="Previous">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+				<polyline points="15 18 9 12 15 6"/>
+			</svg>
+		</button>
+		<img class="lightbox-img" id="lightboxImg" src="" alt="Fullscreen photo">
+		<button class="lightbox-arrow lightbox-arrow--next" id="lbNext" aria-label="Next">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+				<polyline points="9 18 15 12 9 6"/>
+			</svg>
+		</button>
+		<div class="lightbox-counter" aria-live="polite">
+			<span id="lbCurrent">1</span> / <span id="lbTotal"><%= listing.photos ? listing.photos.length : 1 %></span>
+		</div>
+	</div>
+
+	<!-- Pass data to JS -->
+	<script>
+		window.__LISTING__ = {
+			id       : '<%= listing._id %>',
+			price    : <%= listing.price %>,
+			category : '<%= listing.category %>',
+			city     : '<%= encodeURIComponent(listing.location.city) %>',
+			photos   : <%- JSON.stringify(listing.photos || []) %>,
+			isSaved  : <%= locals.isSaved ? 'true' : 'false' %>,
+			isOwner  : <%= (locals.currUser && listing.seller && locals.currUser._id && listing.seller._id && locals.currUser._id.toString() === listing.seller._id.toString()) ? 'true' : 'false' %>
+		};
+		window.__SIMILAR_PRICES__ = <%- JSON.stringify(locals.similarPrices || []) %>;
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+	<script src="/SCRIPT/includes/navbar.ejs"></script>
+	<script src="/SCRIPT/listingPages/showOneListing.js"></script>
+</body>
+</html>
